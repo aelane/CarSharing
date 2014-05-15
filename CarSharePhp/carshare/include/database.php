@@ -35,6 +35,8 @@ function connect($file = 'config.ini') {
     return $dbh;
 }
 
+/* test */
+
 /**
  * Check login details
  * @param string $name Login name
