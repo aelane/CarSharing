@@ -1,3 +1,7 @@
+/**
+this is a function managing booking
+**/
+
 <?php 
 /**
  * Web page to display users active bookings
