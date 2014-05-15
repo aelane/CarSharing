@@ -47,17 +47,20 @@ function checkLogin($name,$pass) {
     // STUDENT TODO:
     // Replace line below with code to validate details from the database
     //
-    $stmt1 = $conn->prepare("SELECT password 
+    $stmt = $dbh->prepare("SELECT nickName, password, pw_salt
     							FROM member 
-    							WHERE nickName = :nN");
-    $stmt2 = $conn->prepare("SELECT password
-    							FROM member
-    							WHERE password = ':pw");
-    $stmt1->bindParam(':nN', $name);
-    $stmt2->bindParam(':pw', $pass);
-    $stmt1->execute();
+    							WHERE nickName = :nN
+    							LIMIT 1");
+    $stmt->bindParam(':nN', $name);
+    $stmt->execute();
+    $stmt->store_result();
+    $stmt->bind_result($nickName, $password, $pw_salt);
+    $stmt->fetch();
     
-    return true;
+    if ($password == $pass)
+    {
+    	return true;
+    }
     return false;
 }
 
