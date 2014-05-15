@@ -1,0 +1,9 @@
+TO LOGIN:
+ssh alan3194@soit-usrweb-pro-1.ucc.usyd.edu.au
+
+TO UPDATE FILES:
+scp -r carshare alan3194@soit-usrweb-pro-1.ucc.usyd.edu.au:public_html/
+
+TO VIEW WEBSITE:
+http://soit-usrweb-pro-1.ucc.usyd.edu.au/~alan3194/carshare/login.php
+

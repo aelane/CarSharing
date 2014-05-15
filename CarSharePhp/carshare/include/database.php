@@ -12,7 +12,7 @@
  * @throws exception
  */
 function connect($file = 'config.ini') {
-	// read database seetings from config file
+	// read database settings from config file
     if ( !$settings = parse_ini_file($file, TRUE) ) 
         throw new exception('Unable to open ' . $file);
     
@@ -45,7 +45,18 @@ function checkLogin($name,$pass) {
     // STUDENT TODO:
     // Replace line below with code to validate details from the database
     //
-    return ($name=='testuser' && $pass=='testpass');
+    $stmt1 = $conn->prepare("SELECT password 
+    							FROM member 
+    							WHERE nickName = :nN");
+    $stmt2 = $conn->prepare("SELECT password
+    							FROM member
+    							WHERE password = ':pw");
+    $stmt1->bindParam(':nN', $name);
+    $stmt2->bindParam(':pw', $pass);
+    $stmt1->execute();
+    
+    return true;
+    return false;
 }
 
 /**
