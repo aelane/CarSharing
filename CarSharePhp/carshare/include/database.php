@@ -73,12 +73,31 @@ function getUserDetails($user) {
     // STUDENT TODO:
     // Replace lines below with code to validate details from the database
     if ($user != 'testuser') throw new Exception('Unknown user');
-    $results = array();
+	//Array of results
+    $results = array(nickName, address, homePod, nBookings);
+	//Prepare info
+	$stmt = $db->prepare('SELECT nickName, address, homePod, COUNT(id)
+								FROM Member JOIN Booking ON memberNo = madeBy
+								WHERE COUNT(id) = :nBookings, memberNo = :user') 
+	$stmt->bindParam(':user', $user)
+	$stmt->bindValue('nBookings', $nBookings, PDO::PARAM_INT);
+	$stmt->execute();
+	$row = $stmt->fetch();
+	$stmt->closeCursor();
+	
+	
     // Example user data - this should come from a query
-    $results['name'] = 'Demo user';
-    $results['address'] = 'Demo location, Sydney, Australia';
-    $results['homepod'] = 'Demo pod';
-    $results['nbookings'] = 17;   
+	/*	$results['name'] = 'Demo user';
+		$results['address'] = 'Demo location, Sydney, Australia';
+		$results['homepod'] = 'Demo pod';
+		$results['nbookings'] = 17;  */
+		
+	// Catch an error if something happens when getting details.
+	Catch (PDOException $e) {
+		print "Error getting user details" . $e->getMessage();
+		die();
+	}
+
     return $results;
 }
 
