@@ -78,8 +78,8 @@ function getUserDetails($user) {
 	//Prepare info
 	$stmt = $db->prepare('SELECT nickName, address, homePod, COUNT(id)
 								FROM Member JOIN Booking ON memberNo = madeBy
-								WHERE COUNT(id) = :nBookings, memberNo = :user') 
-	$stmt->bindParam(':user', $user)
+								WHERE COUNT(id) = :nBookings, memberNo = :user'); 
+	$stmt->bindParam(':user', $user);
 	$stmt->bindValue('nBookings', $nBookings, PDO::PARAM_INT);
 	$stmt->execute();
 	$row = $stmt->fetch();
@@ -110,7 +110,15 @@ function getHomePod($user) {
     // STUDENT TODO:
     // Change lines below with code to retrieve user's home pod from the database
 	if ($user == 'testuser') {
-		return 'testpod';
+	//Prepare pod name
+		$stmt = $db->prepare('SELECT name 
+								FROM Pod JOIN Member ON id = homePod
+								WHERE memberNo = :user')
+		$stmt->bindParam(':user', $user);
+		$stmt->execute();
+		$row = $stmt->fetch();
+		$stmt->closeCursor();
+		return name;
 	}
 	else return null;
 }
@@ -129,11 +137,20 @@ function getPodCars($pod) {
     // Replace lines below with code to get list of cars from the database
     // Example car info - this should come from a query. Format is
 	// (car ID, Car Name, Car currently available)
-    $results = array(
+	
+ /*   $results = array(
         array('id'=>1234,'name'=>'Garry the Getz','avail'=>true),
         array('id'=>4563,'name'=>'Larry the Landrover','avail'=>false),
         array('id'=>7789,'name'=>'Harry the Hovercycle','avail'=>true)
-    );
+    );*/
+	$results = array(regno, name, available);
+	$stmt = $db->prepare('SELECT regno, name
+							FROM Car
+							WHERE parkedAt = getHomePod()');
+	$stmt->execute();
+	$row = $stmt->fetch();
+	$stmt->closeCursor();
+	
     return $results;
 }
 
