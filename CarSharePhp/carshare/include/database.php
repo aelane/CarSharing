@@ -72,7 +72,7 @@ function checkLogin($name,$pass) {
 function getUserDetails($user) {
     // STUDENT TODO:
     // Replace lines below with code to validate details from the database
-    if ($user != 'testuser') throw new Exception('Unknown user');
+    if ($user != nickName) throw new Exception('Unknown user');
 	//Array of results
     $results = array(nickName, address, homePod, nBookings);
 	//Prepare info
@@ -109,7 +109,7 @@ function getUserDetails($user) {
 function getHomePod($user) {
     // STUDENT TODO:
     // Change lines below with code to retrieve user's home pod from the database
-	if ($user == 'testuser') {
+	if ($user == 'nickName') {
 	//Prepare pod name
 		$stmt = $db->prepare('SELECT name 
 								FROM Pod JOIN Member ON id = homePod
