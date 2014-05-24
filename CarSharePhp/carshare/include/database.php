@@ -76,11 +76,13 @@ function getUserDetails($user) {
 	//Array of results
     $results = array(nickName, address, homePod, nBookings);
 	//Prepare info
-	$stmt = $db->prepare('SELECT nickName, address, homePod, COUNT(id)
+	$stmt = $db->prepare("SELECT nickName, address, homePod, COUNT(id)
 								FROM Member JOIN Booking ON memberNo = madeBy
-								WHERE COUNT(id) = :nBookings, memberNo = :user'); 
+								WHERE COUNT(id) = :nBookings, memberNo = :user"); 
+	$stmt = $db->prepare("SELECT * 
+								FROM MemberStats
+								WHERE memberNo = :user")
 	$stmt->bindParam(':user', $user);
-	$stmt->bindValue('nBookings', $nBookings, PDO::PARAM_INT);
 	$stmt->execute();
 	$row = $stmt->fetch();
 	$stmt->closeCursor();
@@ -111,9 +113,9 @@ function getHomePod($user) {
     // Change lines below with code to retrieve user's home pod from the database
 	if ($user == 'nickName') {
 	//Prepare pod name
-		$stmt = $db->prepare('SELECT name 
+		$stmt = $db->prepare("SELECT name 
 								FROM Pod JOIN Member ON id = homePod
-								WHERE memberNo = :user')
+								WHERE memberNo = :user")
 		$stmt->bindParam(':user', $user);
 		$stmt->execute();
 		$row = $stmt->fetch();
@@ -144,12 +146,24 @@ function getPodCars($pod) {
         array('id'=>7789,'name'=>'Harry the Hovercycle','avail'=>true)
     );*/
 	$results = array(regno, name, available);
-	$stmt = $db->prepare('SELECT regno, name
-							FROM Car
-							WHERE parkedAt = getHomePod()');
+	//Get the car id and name from the database
+	$stmt = $db->prepare("SELECT regno, C.name
+							FROM Car  c JOIN Pod P ON parkedAt = id
+							WHERE id IN (SELECT id 
+								FROM Pod JOIN Member ON id = homePod
+								WHERE memberNo = :user)");
+	$stmt->bindParam(':user', $user);				
+
+// The list of cars that are currently unavailable	
+	$stmt = $db->prepare("SELECT regno, name
+							FROM Car JOIN Booking ON regno = car
+							WHERE CURRENT_TIMESTAMP > starttime
+								AND CURRENT_TIMESTAMP < endTime")							
 	$stmt->execute();
 	$row = $stmt->fetch();
 	$stmt->closeCursor();
+	
+	
 	
     return $results;
 }
