@@ -84,7 +84,7 @@ function getUserDetails($user) {
 								WHERE memberNo = :user")
 	$stmt->bindParam(':user', $user);
 	$stmt->execute();
-	$row = $stmt->fetch();
+	$row = $stmt->fetchall();
 	$stmt->closeCursor();
 	
 	
@@ -118,7 +118,7 @@ function getHomePod($user) {
 								WHERE memberNo = :user")
 		$stmt->bindParam(':user', $user);
 		$stmt->execute();
-		$row = $stmt->fetch();
+		$row = $stmt->fetchall();
 		$stmt->closeCursor();
 		return name;
 	}
@@ -160,9 +160,8 @@ function getPodCars($pod) {
 							WHERE CURRENT_TIMESTAMP > starttime
 								AND CURRENT_TIMESTAMP < endTime")							
 	$stmt->execute();
-	$row = $stmt->fetch();
+	$row = $stmt->fetchall();
 	$stmt->closeCursor();
-	
 	
 	
     return $results;
