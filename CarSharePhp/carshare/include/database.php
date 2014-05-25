@@ -80,20 +80,21 @@ function getUserDetails($user) {
 	//Array of results
     $results = array(nickName, address, homePod, nBookings, memberNo, stat_since, stat_nrOfBookings, stat_sumPayments, stat_nrReviews);
 	//Prepare info
-	
-	/*
-	$stmt = $dbh->prepare("SELECT nickName, address, homePod, COUNT(id)
+	$stmt1 = $db->prepare("SELECT nickName, address, homePod, COUNT(id)
 								FROM Member JOIN Booking ON memberNo = madeBy
 								WHERE COUNT(id) = :nBookings, memberNo = :user"); 
-	$stmt = $dbh->prepare("SELECT * 
+	$stmt2 = $db->prepare("SELECT * 
 								FROM MemberStats
 								WHERE memberNo = :user")
-	$stmt->bindParam(':user', $user);
-	$stmt->execute();
-	$row = $stmt->fetchall();
-	$stmt->closeCursor();
-	*/
-	
+	$stmt1->bindParam(':user', $user);
+	$stmt2->bindParam(':user', $user);
+	$stmt1->execute();
+	$stmt2->execute();
+	$row = $stmt1->fetchall();
+	$row = $stmt2->fetchall();
+	$stmt1->closeCursor();
+	$stmt2-->closeCursor();
+		
     // Example user data - this should come from a query
 	/*	$results['name'] = 'Demo user';
 		$results['address'] = 'Demo location, Sydney, Australia';
