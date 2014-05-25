@@ -76,23 +76,25 @@ function checkLogin($name,$pass) {
 function getUserDetails($user) {
     // STUDENT TODO:
     // Replace lines below with code to validate details from the database
+    try{
+    $dbh = connect();
     if ($user != nickName) throw new Exception('Unknown user');
 	//Array of results
     $results = array(nickName, address, homePod, nBookings, memberNo, stat_since, stat_nrOfBookings, stat_sumPayments, stat_nrReviews);
 	//Prepare info
-	$stmt1 = $db->prepare("SELECT nickName, address, homePod, COUNT(id)
+	$stmt1 = $dbh->prepare("SELECT nickName, address, homePod, COUNT(id)
 								FROM Member JOIN Booking ON memberNo = madeBy
-								WHERE COUNT(id) = :nBookings, memberNo = :user"); 
-	$stmt2 = $db->prepare("SELECT * 
-								FROM MemberStats
-								WHERE memberNo = :user")
+								WHERE nickName = :user"); 
 	$stmt1->bindParam(':user', $user);
-	$stmt2->bindParam(':user', $user);
 	$stmt1->execute();
-	$stmt2->execute();
-	$row = $stmt1->fetchall();
-	$row = $stmt2->fetchall();
+	$row1 = $stmt1->fetchall();
 	$stmt1->closeCursor();
+	$stmt2 = $dbh->prepare("SELECT * 
+								FROM MemberStats
+								WHERE nickName = :user")
+	$stmt2->bindParam(':user', $user);
+	$stmt2->execute();
+	$row2 = $stmt2->fetchall();
 	$stmt2-->closeCursor();
 		
     // Example user data - this should come from a query
@@ -101,14 +103,14 @@ function getUserDetails($user) {
 		$results['homepod'] = 'Demo pod';
 		$results['nbookings'] = 17;  
 		*/
-		
+	}	
 	// Catch an error if something happens when getting details.
-	/*
+	
 	Catch (PDOException $e) {
 		print "Error getting user details" . $e->getMessage();
 		die();
 	}
-	*/
+	
     return $results;
 }
 
@@ -124,16 +126,16 @@ function getHomePod($user) {
     // Change lines below with code to retrieve user's home pod from the database
 	if ($user == 'nickName') {
 	//Prepare pod name
-	/*
+	
 		$stmt = $dbh->prepare("SELECT name 
 								FROM Pod JOIN Member ON id = homePod
-								WHERE memberNo = :user")
+								WHERE nickName = :user")
 		$stmt->bindParam(':user', $user);
 		$stmt->execute();
 		$row = $stmt->fetchall();
 		$stmt->closeCursor();
 		return name;
-	*/
+	
 	}
 	else return null;
 }
@@ -153,7 +155,7 @@ function getPodCars($pod) {
     // Example car info - this should come from a query. Format is
 	// (car ID, Car Name, Car currently available)
 	
- /*   $results = array(
+    /*$results = array(
         array('id'=>1234,'name'=>'Garry the Getz','avail'=>true),
         array('id'=>4563,'name'=>'Larry the Landrover','avail'=>false),
         array('id'=>7789,'name'=>'Harry the Hovercycle','avail'=>true)
@@ -161,22 +163,22 @@ function getPodCars($pod) {
 	$results = array(regno, name, available);
 	//Get the car id and name from the database
 	
-	/*
-	$stmt = $dbh->prepare("SELECT regno, C.name
+	
+	$stmt1 = $dbh->prepare("SELECT regno, C.name
 							FROM Car  c JOIN Pod P ON parkedAt = id
 							WHERE id IN (SELECT id 
 								FROM Pod JOIN Member ON id = homePod
-								WHERE memberNo = :user)");
-	$stmt->bindParam(':user', $user);				
+								WHERE nickname = :user)");
+	$stmt1->bindParam(':user', $user);				
 
 // The list of cars that are currently unavailable	
-	$stmt = $dbh->prepare("SELECT regno, name
+	$stmt2 = $dbh->prepare("SELECT regno, name
 							FROM Car JOIN Booking ON regno = car
 							WHERE CURRENT_TIMESTAMP > starttime
 								AND CURRENT_TIMESTAMP < endTime")							
-	$stmt->execute();
+	$stmt2->execute();
 	$row = $stmt->fetchall();
-	$stmt->closeCursor();
+	$stmt2->closeCursor();
 	
 	*/
     return $results;
