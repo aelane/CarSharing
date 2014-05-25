@@ -74,7 +74,7 @@ function getUserDetails($user) {
     // Replace lines below with code to validate details from the database
     if ($user != nickName) throw new Exception('Unknown user');
 	//Array of results
-    $results = array(nickName, address, homePod, nBookings);
+    $results = array(nickName, address, homePod, nBookings, memberNo, stat_since, stat_nrOfBookings, stat_sumPayments, stat_nrReviews);
 	//Prepare info
 	$stmt = $db->prepare("SELECT nickName, address, homePod, COUNT(id)
 								FROM Member JOIN Booking ON memberNo = madeBy
