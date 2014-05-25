@@ -35,8 +35,6 @@ function connect($file = 'config.ini') {
     return $dbh;
 }
 
-/* test */
-
 /**
  * Check login details
  * @param string $name Login name
@@ -47,21 +45,25 @@ function checkLogin($name,$pass) {
     // STUDENT TODO:
     // Replace line below with code to validate details from the database
     //
-    $stmt = $dbh->prepare("SELECT nickName, password, pw_salt
+    try{
+    $dbh = connect();
+    $stmt = $dbh->prepare("SELECT nickname
     							FROM member 
-    							WHERE nickName = :nN
+    							WHERE nickname = :nN AND passwd = :pw
     							LIMIT 1");
     $stmt->bindParam(':nN', $name);
+    $stmt->bindParam(':pw', $pass);
     $stmt->execute();
-    $stmt->store_result();
-    $stmt->bind_result($nickName, $password, $pw_salt);
     $stmt->fetch();
-    
-    if ($password == $pass)
-    {
-    	return true;
     }
-    return false;
+    
+    catch (PDOException $e) {
+		print "Incorrect Username or Password" . $e->getMessage();
+		die();
+		return false;
+	}
+    
+    return true;
 }
 
 /**
@@ -69,6 +71,8 @@ function checkLogin($name,$pass) {
  * @param string $user login name user
  * @return array Details of user - see index.php
  */
+
+
 function getUserDetails($user) {
     // STUDENT TODO:
     // Replace lines below with code to validate details from the database
@@ -76,32 +80,38 @@ function getUserDetails($user) {
 	//Array of results
     $results = array(nickName, address, homePod, nBookings, memberNo, stat_since, stat_nrOfBookings, stat_sumPayments, stat_nrReviews);
 	//Prepare info
-	$stmt = $db->prepare("SELECT nickName, address, homePod, COUNT(id)
+	
+	/*
+	$stmt = $dbh->prepare("SELECT nickName, address, homePod, COUNT(id)
 								FROM Member JOIN Booking ON memberNo = madeBy
 								WHERE COUNT(id) = :nBookings, memberNo = :user"); 
-	$stmt = $db->prepare("SELECT * 
+	$stmt = $dbh->prepare("SELECT * 
 								FROM MemberStats
 								WHERE memberNo = :user")
 	$stmt->bindParam(':user', $user);
 	$stmt->execute();
 	$row = $stmt->fetchall();
 	$stmt->closeCursor();
-	
+	*/
 	
     // Example user data - this should come from a query
 	/*	$results['name'] = 'Demo user';
 		$results['address'] = 'Demo location, Sydney, Australia';
 		$results['homepod'] = 'Demo pod';
-		$results['nbookings'] = 17;  */
+		$results['nbookings'] = 17;  
+		*/
 		
 	// Catch an error if something happens when getting details.
+	/*
 	Catch (PDOException $e) {
 		print "Error getting user details" . $e->getMessage();
 		die();
 	}
-
+	*/
     return $results;
 }
+
+
 
 /**
  * Get details of the current user
@@ -113,7 +123,8 @@ function getHomePod($user) {
     // Change lines below with code to retrieve user's home pod from the database
 	if ($user == 'nickName') {
 	//Prepare pod name
-		$stmt = $db->prepare("SELECT name 
+	/*
+		$stmt = $dbh->prepare("SELECT name 
 								FROM Pod JOIN Member ON id = homePod
 								WHERE memberNo = :user")
 		$stmt->bindParam(':user', $user);
@@ -121,6 +132,7 @@ function getHomePod($user) {
 		$row = $stmt->fetchall();
 		$stmt->closeCursor();
 		return name;
+	*/
 	}
 	else return null;
 }
@@ -147,7 +159,9 @@ function getPodCars($pod) {
     );*/
 	$results = array(regno, name, available);
 	//Get the car id and name from the database
-	$stmt = $db->prepare("SELECT regno, C.name
+	
+	/*
+	$stmt = $dbh->prepare("SELECT regno, C.name
 							FROM Car  c JOIN Pod P ON parkedAt = id
 							WHERE id IN (SELECT id 
 								FROM Pod JOIN Member ON id = homePod
@@ -155,7 +169,7 @@ function getPodCars($pod) {
 	$stmt->bindParam(':user', $user);				
 
 // The list of cars that are currently unavailable	
-	$stmt = $db->prepare("SELECT regno, name
+	$stmt = $dbh->prepare("SELECT regno, name
 							FROM Car JOIN Booking ON regno = car
 							WHERE CURRENT_TIMESTAMP > starttime
 								AND CURRENT_TIMESTAMP < endTime")							
@@ -163,7 +177,7 @@ function getPodCars($pod) {
 	$row = $stmt->fetchall();
 	$stmt->closeCursor();
 	
-	
+	*/
     return $results;
 }
 
