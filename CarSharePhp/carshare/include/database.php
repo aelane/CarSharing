@@ -205,7 +205,7 @@ function getHomePod($user) {
  */
 function getPodCars($pod) {
 	// Return no cars if no pod specified
-	//if (empty($pod)) return array();
+	if (empty($pod)) return array();
 	
     // STUDENT TODO:
     // Replace lines below with code to get list of cars from the database
@@ -218,8 +218,7 @@ function getPodCars($pod) {
         array('id'=>7789,'name'=>'Harry the Hovercycle','avail'=>true)
     );*/
 
-<<<<<<< HEAD
-   
+
 	try{
 
 	//Get the car id and name from the database
