@@ -48,6 +48,7 @@ function htmlHead() {
         <li><a href="bookings.php">Current Bookings</a></li>
         <li><a href="newbooking.php">New Booking</a></li>
         <li><a href="reviews.php">Reviews and Ratings</a></li>
+        <li><a href="addreview.php">Add Review</a></li>
         <li><a href="login.php">Quit</a></li>
     </ul>
     <div id="content">

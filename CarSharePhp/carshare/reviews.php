@@ -1,7 +1,7 @@
 <?php 
 /**
  * Reviews and Ratings Page
- * Links to search new cars
+ * 
  */
 require_once('include/common.php');
 require_once('include/database.php');
@@ -34,7 +34,7 @@ foreach($reviews as $review) {
 </table>
 <?php
 } catch (Exception $e) {
-        echo 'Cannot find any reviews for this car';
+        echo 'Could not write your review';
 }
 htmlFoot();
 ?>
