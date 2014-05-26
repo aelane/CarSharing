@@ -15,9 +15,6 @@ function log_out() {
     $_SESSION['logged_in'] = false;
 }
 
-/**Demo Comment!!!!!*/
-
-
 /**
  * Process a user's login details
  * @param string $name username

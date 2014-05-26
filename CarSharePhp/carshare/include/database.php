@@ -185,9 +185,16 @@ function getHomePod($user) {
 		$result = $stmt->fetchall();
 		$stmt->closeCursor();
 		return $result;
-	
-	}
-	else return null;
+	} catch (PDOException $e) {
+        
+    	print "Unable to obtain user data" . $e->getMessage();
+        
+   		die();
+        
+   		return FALSE;
+    
+   	}
+	return null;
 }
 
 /**
@@ -198,7 +205,7 @@ function getHomePod($user) {
  */
 function getPodCars($pod) {
 	// Return no cars if no pod specified
-	if (empty($pod)) return array();
+	//if (empty($pod)) return array();
 	
     // STUDENT TODO:
     // Replace lines below with code to get list of cars from the database
@@ -210,6 +217,8 @@ function getPodCars($pod) {
         array('id'=>4563,'name'=>'Larry the Landrover','avail'=>false),
         array('id'=>7789,'name'=>'Harry the Hovercycle','avail'=>true)
     );*/
+    
+    /*
 	$results = array(regno, name, available);
 	//Get the car id and name from the database
 	
@@ -220,8 +229,9 @@ function getPodCars($pod) {
 								FROM Pod JOIN Member ON id = homePod
 								WHERE nickname = :user)");
 	$stmt1->bindParam(':user', $user);				
-
+*/
 // The list of cars that are currently unavailable	
+	/*
 	$stmt2 = $dbh->prepare("SELECT regno, name
 							FROM Car JOIN Booking ON regno = car
 							WHERE CURRENT_TIMESTAMP > starttime
@@ -276,5 +286,40 @@ function makeBooking($user,$car,$tripdate,$starttime,$numhours) {
 			'cost'=>'21.20'
         );
 }
+
+
+/**
+*Returns the review information for a new car
+**/
+function getCarReviews($carname) {
+    try{
+        
+    	$dbh = connect();
+ 
+		$stmt = $dbh->prepare("SELECT description, rating, nickname, whendone 
+				FROM member M, car C, review R
+				WHERE C.name = :cname
+				AND M.memberno = R.memberno
+				AND C.regno = R.regno
+				ORDER BY R.whendone, M.nickname");
+	    $stmt->bindParam(':cname', $carname);
+        
+    	$stmt->execute();
+        
+    	$results = $stmt->fetchAll();
+        
+    	$stmt->closeCursor();
+    } catch (PDOException $e) {
+        
+    	print "No reviews could be retrieved for this car" . $e->getMessage();
+        
+   		die();
+        
+   		return FALSE;
+    
+   	}
+    return $results;
+}
+
 
 ?>
