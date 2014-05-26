@@ -185,9 +185,16 @@ function getHomePod($user) {
 		$result = $stmt->fetchall();
 		$stmt->closeCursor();
 		return $result;
-	
-	}
-	else return null;
+	} catch (PDOException $e) {
+        
+    	print "Unable to obtain user data" . $e->getMessage();
+        
+   		die();
+        
+   		return FALSE;
+    
+   	}
+	return null;
 }
 
 /**
@@ -210,18 +217,22 @@ function getPodCars($pod) {
         array('id'=>4563,'name'=>'Larry the Landrover','avail'=>false),
         array('id'=>7789,'name'=>'Harry the Hovercycle','avail'=>true)
     );*/
+
+   
+	try{
+	//Get the car id and name from the database
 	$dhb = connect();
 	//Find id of the car 
 	$stmtid = $dbh->prepare("SELECT regno FROM Car JOIN Pod On parkedAt = id 
 								WHERE id IN (SELECT id 
 												FROM Pod JOIN Member ON id = homePod
 												WHERE nickname = :nN)")
-	
+
 	$stmtid->bindParam(':nN', $user);
 	
 	$stmtid->execute();
 	
-	$results['id'] = $stmtid->fetchColumn();
+	$results['id'] = $stmtid->fetchAll();
 	
 	$stmtid->closeCursor();
 	
@@ -230,13 +241,14 @@ function getPodCars($pod) {
 	$stmtname = $dbh->prepare("SELECT C.name FROM Car  c JOIN Pod P ON parkedAt = id
 							WHERE id IN (SELECT id 
 								FROM Pod JOIN Member ON id = homePod
-								WHERE nickname = :user)");
-								
+								WHERE nickname = :nN)");
+							
+
 	$stmtname->bindParam(':nN', $user);
 	
 	$stmtname->execute();
 	
-	$results['name'] = $stmtname->fetchColumn();
+	$results['name'] = $stmtname->fetchAll();
 	
 	$stmtname->closeCursor();
 	
@@ -248,12 +260,17 @@ function getPodCars($pod) {
 								
 	$stmtunavail->execute();
 	
-	$unavail[] = $stmtunavail->fetchColumn();
+	$unavail[] = $stmtunavail->fetchAll();
 								
 	
 // The list of cars that are currently unavailable	
+	} catch (PDOException $e) {
+        
+    	print "Unable to obtain user data" . $e->getMessage();
+        
+   		die();
+	 }
 
-	*/
     return $results;
 }
 
@@ -299,5 +316,40 @@ function makeBooking($user,$car,$tripdate,$starttime,$numhours) {
 			'cost'=>'21.20'
         );
 }
+
+
+/**
+*Returns the review information for a new car
+**/
+function getCarReviews($carname) {
+    try{
+        
+    	$dbh = connect();
+ 
+		$stmt = $dbh->prepare("SELECT description, rating, nickname, whendone 
+				FROM member M, car C, review R
+				WHERE C.name = :cname
+				AND M.memberno = R.memberno
+				AND C.regno = R.regno
+				ORDER BY R.whendone, M.nickname");
+	    $stmt->bindParam(':cname', $carname);
+        
+    	$stmt->execute();
+        
+    	$results = $stmt->fetchAll();
+        
+    	$stmt->closeCursor();
+    } catch (PDOException $e) {
+        
+    	print "No reviews could be retrieved for this car" . $e->getMessage();
+        
+   		die();
+        
+   		return FALSE;
+    
+   	}
+    return $results;
+}
+
 
 ?>
