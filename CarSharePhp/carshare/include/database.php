@@ -204,7 +204,7 @@ function getHomePod($user) {
  * @throws Exception 
  */
 function getPodCars($pod) {
- Return no cars if no pod specified
+ //Return no cars if no pod specified
 	if (empty($pod)) return array();
 	
     // STUDENT TODO:
@@ -227,7 +227,7 @@ function getPodCars($pod) {
 	$stmtid = $dbh->prepare("SELECT regno FROM Car JOIN Pod On parkedAt = id 
 								WHERE id IN (SELECT id 
 												FROM Pod JOIN Member ON id = homePod
-												WHERE nickname = :nN)")
+												WHERE nickname = :nN)");
 
 	$stmtid->bindParam(':nN', $user);
 	
@@ -241,8 +241,10 @@ function getPodCars($pod) {
 	
 	$stmtname = $dbh->prepare("SELECT C.name FROM Car  c JOIN Pod P ON parkedAt = id
 							WHERE id IN (SELECT id 
-								FROM Pod JOIN Member ON id = homePod
-								WHERE nickname = :nN)");
+								
+							FROM Pod JOIN Member ON id = homePod
+								
+							WHERE nickname = :nN)");
 
 	$stmtname->bindParam(':nN', $user);
 	
@@ -266,10 +268,13 @@ function getPodCars($pod) {
 // The list of cars that are currently unavailable	
 	} catch (PDOException $e) {
         
-    	print "Unable to obtain user data" . $e->getMessage();
+    	print "Unable to get Car Pods" . $e->getMessage();
         
    		die();
-	 }
+        
+   		return FALSE;
+    
+   	}
 return $results;
 }
 	
@@ -379,4 +384,6 @@ function writeReview($user, $carname, $description, $rating) {
    	}
    	return $review
 }
+
 ?>
+
