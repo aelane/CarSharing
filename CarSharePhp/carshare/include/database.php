@@ -179,8 +179,8 @@ function getHomePod($user) {
  
 		$stmt = $dbh->prepare("SELECT name 
 								FROM Pod JOIN Member ON id = homePod
-								WHERE nickName = :user");
-		$stmt->bindParam(':user', $user);
+								WHERE nickName = :nN");
+		$stmt->bindParam(':nN', $user);
 		$stmt->execute();
 		$result = $stmt->fetchall();
 		$stmt->closeCursor();
@@ -210,26 +210,49 @@ function getPodCars($pod) {
         array('id'=>4563,'name'=>'Larry the Landrover','avail'=>false),
         array('id'=>7789,'name'=>'Harry the Hovercycle','avail'=>true)
     );*/
-	$results = array(regno, name, available);
-	//Get the car id and name from the database
+	$dhb = connect();
+	//Find id of the car 
+	$stmtid = $dbh->prepare("SELECT regno FROM Car JOIN Pod On parkedAt = id 
+								WHERE id IN (SELECT id 
+												FROM Pod JOIN Member ON id = homePod
+												WHERE nickname = :nN)")
 	
+	$stmtid->bindParam(':nN', $user);
 	
-	$stmt1 = $dbh->prepare("SELECT regno, C.name
-							FROM Car  c JOIN Pod P ON parkedAt = id
+	$stmtid->execute();
+	
+	$results['id'] = $stmtid->fetchColumn();
+	
+	$stmtid->closeCursor();
+	
+	//Find name of the car
+	
+	$stmtname = $dbh->prepare("SELECT C.name FROM Car  c JOIN Pod P ON parkedAt = id
 							WHERE id IN (SELECT id 
 								FROM Pod JOIN Member ON id = homePod
 								WHERE nickname = :user)");
-	$stmt1->bindParam(':user', $user);				
-
-// The list of cars that are currently unavailable	
-	$stmt2 = $dbh->prepare("SELECT regno, name
-							FROM Car JOIN Booking ON regno = car
-							WHERE CURRENT_TIMESTAMP > starttime
-								AND CURRENT_TIMESTAMP < endTime");							
-	$stmt2->execute();
-	$row = $stmt->fetchall();
-	$stmt2->closeCursor();
+								
+	$stmtname->bindParam(':nN', $user);
 	
+	$stmtname->execute();
+	
+	$results['name'] = $stmtname->fetchColumn();
+	
+	$stmtname->closeCursor();
+	
+	//Find list of car names that are unavailable
+
+	$stmtunavail = $dbh->prepare("SELECT name FROM Car JOIN Booking ON regno = car
+							WHERE CURRENT_TIMESTAMP > starttime
+								AND CURRENT_TIMESTAMP < endTime");
+								
+	$stmtunavail->execute();
+	
+	$unavail[] = $stmtunavail->fetchColumn();
+								
+	
+// The list of cars that are currently unavailable	
+
 	*/
     return $results;
 }
