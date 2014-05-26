@@ -83,46 +83,83 @@ function checkLogin($name,$pass) {
  * @param string $user login name user
  * @return array Details of user - see index.php
  */
-
-
 function getUserDetails($user) {
     // STUDENT TODO:
     // Replace lines below with code to validate details from the database
     try{
-    $dbh = connect();
-    if ($user != nickName) throw new Exception('Unknown user');
-	//Array of results
-    $results = array(nickName, address, homePod, nBookings, memberNo, stat_since, stat_nrOfBookings, stat_sumPayments, stat_nrReviews);
-	//Prepare info
-	$stmt1 = $dbh->prepare("SELECT nickName, address, homePod, COUNT(id)
-								FROM Member JOIN Booking ON memberNo = madeBy
-								WHERE nickName = :user"); 
-	$stmt1->bindParam(':user', $user);
-	$stmt1->execute();
-	$row1 = $stmt1->fetchall();
-	$stmt1->closeCursor();
-	$stmt2 = $dbh->prepare("SELECT * 
-								FROM MemberStats
-								WHERE nickName = :user")
-	$stmt2->bindParam(':user', $user);
-	$stmt2->execute();
-	$row2 = $stmt2->fetchall();
-	$stmt2-->closeCursor();
-		
-    // Example user data - this should come from a query
-	/*	$results['name'] = 'Demo user';
-		$results['address'] = 'Demo location, Sydney, Australia';
-		$results['homepod'] = 'Demo pod';
-		$results['nbookings'] = 17;  
-		*/
-	}	
-	// Catch an error if something happens when getting details.
-	
-	Catch (PDOException $e) {
-		print "Error getting user details" . $e->getMessage();
-		die();
-	}
-	
+        
+    	$dbh = connect();
+        
+        
+    	//Find user's full name and concatenate
+        
+    	$stmtname = $dbh->prepare("SELECT givenname || ' ' || familyname FROM member WHERE nickName = :nN");
+        
+    	$stmtname->bindParam(':nN',$user);
+        
+    	$stmtname->execute();
+        
+    	$results['name'] = $stmtname->fetchColumn();
+        
+    	$stmtname->closeCursor();
+ 
+    	       
+        
+        
+    	//Find user's address
+        
+    	$stmtaddress = $dbh->prepare("SELECT address FROM member WHERE nickName = :nN");
+        
+    	$stmtaddress->bindParam(':nN',$user);
+        
+    	$stmtaddress->execute();
+        
+    	$results['address'] = $stmtaddress->fetchColumn();
+        
+    	$stmtaddress->closeCursor();
+
+    	        
+        
+    	//Find user's homepod (if avaliable)
+        
+    	$stmtpod = $dbh->prepare("SELECT pod.name FROM member JOIN pod ON homepod = id WHERE nickName = :nN");
+        
+    	$stmtpod->bindParam(':nN',$user);
+        
+    	$stmtpod->execute();
+        
+    	$results['homepod'] = $stmtpod->fetchColumn();
+        
+    	if (is_null($results['homepod'])){
+           
+    		$results['homepod'] = 'No homepod';
+        
+    	}
+        
+    	$stmtpod->closeCursor();
+  
+    	      
+        
+    	//For finding number of bookings user has
+        
+    	$stmtnbook = $dbh->prepare("SELECT COUNT(*) FROM member JOIN booking ON memberNo = madeBy WHERE nickName = :nN");
+        
+    	$stmtnbook->bindParam(':nN', $user);
+        
+    	$stmtnbook->execute();
+        
+    	$results['nbookings'] = $stmtnbook->fetchColumn();
+        
+    	$stmtnbook->closeCursor();
+    } catch (PDOException $e) {
+        
+    	print "Unable to obtain user data" . $e->getMessage();
+        
+   		die();
+        
+   		return FALSE;
+    
+   	}
     return $results;
 }
 
@@ -136,17 +173,18 @@ function getUserDetails($user) {
 function getHomePod($user) {
     // STUDENT TODO:
     // Change lines below with code to retrieve user's home pod from the database
-	if ($user == 'nickName') {
+	try {
 	//Prepare pod name
-	
+		$dbh = connect();
+ 
 		$stmt = $dbh->prepare("SELECT name 
 								FROM Pod JOIN Member ON id = homePod
-								WHERE nickName = :user")
+								WHERE nickName = :user");
 		$stmt->bindParam(':user', $user);
 		$stmt->execute();
-		$row = $stmt->fetchall();
+		$result = $stmt->fetchall();
 		$stmt->closeCursor();
-		return name;
+		return $result;
 	
 	}
 	else return null;
@@ -187,7 +225,7 @@ function getPodCars($pod) {
 	$stmt2 = $dbh->prepare("SELECT regno, name
 							FROM Car JOIN Booking ON regno = car
 							WHERE CURRENT_TIMESTAMP > starttime
-								AND CURRENT_TIMESTAMP < endTime")							
+								AND CURRENT_TIMESTAMP < endTime");							
 	$stmt2->execute();
 	$row = $stmt->fetchall();
 	$stmt2->closeCursor();
