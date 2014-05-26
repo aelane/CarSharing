@@ -46,24 +46,36 @@ function checkLogin($name,$pass) {
     // Replace line below with code to validate details from the database
     //
     try{
-    $dbh = connect();
-    $stmt = $dbh->prepare("SELECT nickname
-    							FROM member 
-    							WHERE nickname = :nN AND passwd = :pw
-    							LIMIT 1");
-    $stmt->bindParam(':nN', $name);
-    $stmt->bindParam(':pw', $pass);
-    $stmt->execute();
-    $stmt->fetch();
+        
+    	$dbh = connect();
+        
+    	$stmt = $dbh->prepare("SELECT COUNT(*) 
+    						FROM member 
+    						WHERE nickname = :nN AND passwd = :pw");
+        
+    	$stmt->bindParam(':nN', $name);
+        
+    	$stmt->bindParam(':pw', $pass);
+        
+    	$stmt->execute();
+        
+    	$result = $stmt->fetchColumn();
+        
+    	$stmt->closeCursor();
+    
     }
+ catch (PDOException $e) {
+            
+    	print "Incorrect Username or Password" . $e->getMessage();
+            
+    	die();
+            
+    	return FALSE;
+        
+    }
+                              
     
-    catch (PDOException $e) {
-		print "Incorrect Username or Password" . $e->getMessage();
-		die();
-		return false;
-	}
-    
-    return true;
+    return ($result == 1);
 }
 
 /**

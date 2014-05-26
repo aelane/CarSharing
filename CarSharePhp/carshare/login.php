@@ -80,8 +80,8 @@ if(!isset($_POST['user']) || !isset($_POST['pass'])) {
     <h1>Car Share Client</h1>
     <div id="login">
         <form action="<?php echo 'login.php',$qstring; ?>" id="loginform" method="post">
-            <label>Name <input type=text name="user" /></label>(test with "testuser")<br />
-            <label>Password <input type=password name="pass" /></label>(test with "testpass")<br />
+            <label>Name <input type=text name="user" /></label><br />
+            <label>Password <input type=password name="pass" /></label><br />
             <input type=submit value="Log in"/>
         </form>
     <div id="message">
