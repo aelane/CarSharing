@@ -204,8 +204,73 @@ function getHomePod($user) {
  * @throws Exception 
  */
 function getPodCars($pod) {
+ Return no cars if no pod specified
+	if (empty($pod)) return array();
+	
+    // STUDENT TODO:
+    // Replace lines below with code to get list of cars from the database
+    // Example car info - this should come from a query. Format is
+	// (car ID, Car Name, Car currently available)
+	
+    /*$results = array(
+        array('id'=>1234,'name'=>'Garry the Getz','avail'=>true),
+        array('id'=>4563,'name'=>'Larry the Landrover','avail'=>false),
+        array('id'=>7789,'name'=>'Harry the Hovercycle','avail'=>true)
+    );*/
 
-    return $results;
+
+	try{
+
+	//Get the car id and name from the database
+	$dhb = connect();
+	//Find id of the car 
+	$stmtid = $dbh->prepare("SELECT regno FROM Car JOIN Pod On parkedAt = id 
+								WHERE id IN (SELECT id 
+												FROM Pod JOIN Member ON id = homePod
+												WHERE nickname = :nN)")
+
+	$stmtid->bindParam(':nN', $user);
+	
+	$stmtid->execute();
+	
+	$results['id'] = $stmtid->fetchAll();
+	
+	$stmtid->closeCursor();
+	
+	//Find name of the car
+	
+	$stmtname = $dbh->prepare("SELECT C.name FROM Car  c JOIN Pod P ON parkedAt = id
+							WHERE id IN (SELECT id 
+								FROM Pod JOIN Member ON id = homePod
+								WHERE nickname = :nN)");
+
+	$stmtname->bindParam(':nN', $user);
+	
+	$stmtname->execute();
+	
+	$results['name'] = $stmtname->fetchAll();
+	
+	$stmtname->closeCursor();
+	
+	//Find list of car names that are unavailable
+
+	$stmtunavail = $dbh->prepare("SELECT name FROM Car JOIN Booking ON regno = car
+							WHERE CURRENT_TIMESTAMP > starttime
+								AND CURRENT_TIMESTAMP < endTime");
+								
+	$stmtunavail->execute();
+	
+	$unavail[] = $stmtunavail->fetchAll();
+								
+	
+// The list of cars that are currently unavailable	
+	} catch (PDOException $e) {
+        
+    	print "Unable to obtain user data" . $e->getMessage();
+        
+   		die();
+	 }
+return $results;
 }
 	
 
