@@ -204,69 +204,10 @@ function getHomePod($user) {
  * @throws Exception 
  */
 function getPodCars($pod) {
-	// Return no cars if no pod specified
-	//if (empty($pod)) return array();
-	
-    // STUDENT TODO:
-    // Replace lines below with code to get list of cars from the database
-    // Example car info - this should come from a query. Format is
-	// (car ID, Car Name, Car currently available)
-	
-    /*$results = array(
-        array('id'=>1234,'name'=>'Garry the Getz','avail'=>true),
-        array('id'=>4563,'name'=>'Larry the Landrover','avail'=>false),
-        array('id'=>7789,'name'=>'Harry the Hovercycle','avail'=>true)
-    );*/
 
-    /*
-	$results = array(regno, name, available);
-	//Get the car id and name from the database
-	$dhb = connect();
-	//Find id of the car 
-	$stmtid = $dbh->prepare("SELECT regno FROM Car JOIN Pod On parkedAt = id 
-								WHERE id IN (SELECT id 
-												FROM Pod JOIN Member ON id = homePod
-												WHERE nickname = :nN)")
-
-	$stmtid->bindParam(':nN', $user);
-	
-	$stmtid->execute();
-	
-	$results['id'] = $stmtid->fetchColumn();
-	
-	$stmtid->closeCursor();
-	
-	//Find name of the car
-	
-	$stmtname = $dbh->prepare("SELECT C.name FROM Car  c JOIN Pod P ON parkedAt = id
-							WHERE id IN (SELECT id 
-								FROM Pod JOIN Member ON id = homePod
-								WHERE nickname = :user)");
-							
-	$stmtname->bindParam(':nN', $user);
-	
-	$stmtname->execute();
-	
-	$results['name'] = $stmtname->fetchColumn();
-	
-	$stmtname->closeCursor();
-	
-	//Find list of car names that are unavailable
-
-	$stmtunavail = $dbh->prepare("SELECT name FROM Car JOIN Booking ON regno = car
-							WHERE CURRENT_TIMESTAMP > starttime
-								AND CURRENT_TIMESTAMP < endTime");
-								
-	$stmtunavail->execute();
-	
-	$unavail[] = $stmtunavail->fetchColumn();
-								
-	
-// The list of cars that are currently unavailable	
-
-	*/
     return $results;
 }
+	
 
 /**
  * Retrieve information on active bookings for a user
@@ -346,4 +287,31 @@ function getCarReviews($carname) {
 }
 
 
+function writeReview($user, $carname, $description, $rating) {
+	try {
+	$dbh = connect();
+ 
+	//$dbh->beginTransaction();
+
+ 	/*$stmt = $dbh->query("INSERT INTO review VALUES 
+			((SELECT memberno FROM member WHERE nickname = :nn),
+			(SELECT regno FROM car WHERE name = carname),
+			CURRENT_DATE, 
+			rating,
+			:description)");
+			*/
+
+ 	//$dbh->commit(); 
+	$review['status'] == 'success'
+    } catch (PDOException $e) {
+        
+    	print "No reviews could be retrieved for this car" . $e->getMessage();
+        
+   		die();
+        
+   		return FALSE;
+    
+   	}
+   	return $review
+}
 ?>
