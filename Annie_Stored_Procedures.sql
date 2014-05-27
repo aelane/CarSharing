@@ -40,11 +40,7 @@
 
     CREATE OR REPLACE FUNCTION carsharing.newReview(nn VARCHAR(10), carname VARCHAR(40), rating ratingdomain, description VARCHAR(500)) RETURNS void AS $$                           
     BEGIN
-	BEGIN TRANSACTION;
 	INSERT INTO review VALUES ((SELECT memberno FROM member WHERE nickname = nn),(SELECT regno FROM car WHERE name = carname),CURRENT_DATE, rating,description);                                                            
-	UPDATE memberstats SET stat_nrreviews = stat_nrreviews + 1 WHERE SELECT memberno FROM member WHERE nickname = nn);
-	COMMIT;
-	ELSE ROLLBACK;
-
+	UPDATE memberstats SET stat_nrreviews = stat_nrreviews + 1 WHERE (SELECT memberno FROM member WHERE nickname = nn);
     END;
     $$ LANGUAGE plpgsql;

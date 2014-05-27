@@ -1,0 +1,26 @@
+Assignment 3
+
+We ran into implementation problems with the stored procedures.
+Ideally, we would have liked our transactions to be saved as stored procedures.
+However, postgresql does not support transactions in stored procedures.
+Also, the inputs to stored procedures often required particular type casting. 
+This became an issue when trying to incorporate the stored procedure usage into the PHP and binding parameters.
+There are stored procedures created that we do not actually use in the PHP, unfortunately.
+
+The first extension, the reviews and rating page resulted in two tabs being added to the header.
+These tabs link to two new pages. 
+The first page allows the user to search a car name and then produces a table of reviews for that car.
+The write review page has 3 fields for the user to enter.
+The reviews relation also needed to be populated.
+
+The indexes were created in order to create an access path to locate rows efficiently via search key fields. 
+This not only speeds up the time to obtain select statements, but also does so for updates, inserts, and joins.
+We created indexes that are related to the SQL statements used throughout the website.
+However, some indexes already existed because they are the default because it is on the primary key. 
+We ensured the indexes created will not lead too much overhead; we weighed the cost and benefit of each.
+
+The bindParam() function used for each prepare statement defends against SQL injection.
+
+Parts of the core functionality were not throughly tested on a PHP server.
+This functionality is commented out and default values are used on our website so that the website does not crash.
+

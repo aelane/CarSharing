@@ -12,11 +12,16 @@ htmlHead();
 <h1>Reviews and Ratings</h1>
 
 <form action="reviews.php" method="get">
-<label>Car<input type=text value="<?php echo $_GET['carname'];?>"name="carname" /></label><br />
+<label>Car<input type=text value="<?php echo $_GET['carname'];?>"name="carname" placeholder="Michael the Yaris" /></label><br />
 <input type=submit value="Search"/>
 <?php 
 try {
-	$reviews = getCarReviews($_GET['carname']);
+	
+	if ($_GET['carname']){
+		$reviews = getCarReviews($_GET['carname']);
+	} else {
+		$reviews = getCarReviews('Michael the Yaris');
+	}
 ?>
 </form>
 <table>

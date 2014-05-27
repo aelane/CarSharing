@@ -24,7 +24,7 @@ echo 'Submitting review.';
         if($newreview['status'] == 'success') { 
             echo '<h2>Congratulations, you\'ve written a new review!';
         } else {
-            echo '<h2>Sorry, couldn\t post your review:</h2>', $booking['status'];
+            echo '<h2>Sorry, couldn\t post your review:</h2>', $newreview['status'];
         }
     } catch (Exception $e) {
             echo 'Couldn\'t submit review. Please try again.';
