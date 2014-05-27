@@ -263,9 +263,13 @@ function getPodCars($pod) {
 	$stmtunavail->execute();
 	
 	$unavail[] = $stmtunavail->fetchAll();
-								
 	
-// The list of cars that are currently unavailable	
+	//Default 'avail' set to true
+	
+	$restults['avail'] = true;
+	
+	//catching exception
+	
 	} catch (PDOException $e) {
         
     	print "Unable to get Car Pods" . $e->getMessage();
