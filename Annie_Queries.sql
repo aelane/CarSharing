@@ -34,3 +34,18 @@ ALTER FUNCTION carsharing."getMemberFullName"(character varying[])
   OWNER TO alan3194;
 /*carsharing."getMemberFullName"(character varying[]) IS 'First and last name of a member as a single string
 Uses nickname to find member' */
+
+
+
+CREATE carsharing."getMemberFullName"("nN" character varying[])
+  RETURNS character varying[] AS
+$BODY$DECLARE
+      name refcursor;                                                   
+BEGIN
+	OPEN name FOR SELECT givenname || ' ' || familyname FROM member WHERE nickname = nN;
+	RETURN name;
+END;$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+ALTER FUNCTION carsharing."getMemberFullName"(character varying[])
+  OWNER TO alan3194;
